@@ -1,11 +1,68 @@
-export default class StringBuilder {
+class StringBuilder {
 
     constructor(props){
         this.parts = (props && props.constructor === Array) ? props : [''];
+
+        this.partHandler = {
+            string: (str, part, callback) => {
+                str += part;
+                callback(str);
+            },
+            object: (str, part, callback) => {
+                if(!part.hasOwnProperty('value')){
+                    this.error('object must have a "value" property \n\n'+JSON.stringify(part));
+                }
+                var handler = this.getHandler(this.partHandlerLink, part.value);
+
+                handler(str, part.value, (resStr) => {
+                    var part_str = resStr.slice(str.length);
+                    var valid = this.verify({
+                        value: part_str,
+                        test: part.test
+                    });
+
+                    if(!valid){
+                        this.valid = valid;
+                    }
+
+                    str += part_str;
+                    callback(str);
+                });
+            },
+            function: (str, part, callback) => {
+                if(part.length < 1){
+                    this.error('function must call a callback \n\n'+part);
+                }
+
+                part(function (res) {
+                    str += res;
+                    callback(str);
+                });
+            }
+        };
+
+        this.verifyHandlers = {
+            regexp: (part) => {
+                return part.test.test(part.value);
+            }
+        };
+
+        this.partHandlerLink = {
+            string: this.partHandler.string,
+            date: this.partHandler.string,
+            number: this.partHandler.string,
+            object: this.partHandler.object,
+            function: this.partHandler.function
+        };
+
+        this.verifyHandlersLink = {
+            regexp: this.verifyHandlers.regexp
+        };
+
         return this;
     };
 
-    getHandler = (obj_handlers, value) => {
+    getHandler(obj_handlers, value) {
         var handler = obj_handlers[ value.constructor.name.toLowerCase() ];
 
         if(handler){
@@ -15,63 +72,7 @@ export default class StringBuilder {
         }
     };
 
-    partHandler = {
-        string: (str, part, callback) => {
-            str += part;
-            callback(str);
-        },
-        object: (str, part, callback) => {
-            if(!part.hasOwnProperty('value')){
-                this.error('object must have a "value" property \n\n'+JSON.stringify(part));
-            }
-            var handler = this.getHandler(this.partHandlerLink, part.value);
-
-            handler(str, part.value, (resStr) => {
-                var part_str = resStr.slice(str.length);
-                var valid = this.verify({
-                    value: part_str,
-                    test: part.test
-                });
-
-                if(!valid){
-                    this.valid = valid;
-                }
-
-                str += part_str;
-                callback(str);
-            });
-        },
-        function: (str, part, callback) => {
-            if(part.length < 1){
-                this.error('function must call a callback \n\n'+part);
-            }
-
-            part(function (res) {
-                str += res;
-                callback(str);
-            });
-        }
-    };
-
-    verifyHandlers = {
-        regexp: (part) => {
-            return part.test.test(part.value);
-        }
-    };
-
-    partHandlerLink = {
-        string: this.partHandler.string,
-        date: this.partHandler.string,
-        number: this.partHandler.string,
-        object: this.partHandler.object,
-        function: this.partHandler.function
-    };
-
-    verifyHandlersLink = {
-        regexp: this.verifyHandlers.regexp
-    };
-
-    verify = (part) => {
+    verify(part) {
         var valid = true;
 
         if(part.test !== undefined && part.test !== null){
@@ -81,7 +82,7 @@ export default class StringBuilder {
         return valid;
     };
 
-    build = (callback) => {
+    build(callback) {
         this.valid = true;
         (function buildPart(active_part_index, str) {
             if(active_part_index < this.parts.length){
@@ -96,7 +97,7 @@ export default class StringBuilder {
         }).call(this, 0, '');
     }
 
-    error = (msg) => {
+    error(msg) {
         throw new Error(msg);
     };
 };
