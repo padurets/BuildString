@@ -1,4 +1,4 @@
-# StringBuilder
+# BuildString
 
 ### Example
 
@@ -22,7 +22,7 @@ var parameters = [
 ]
 
 
-var string = new StringBuilder(parameters);
+var string = new BuildString(parameters);
 
 string.build(function(generatedString, isvalid){
     // generatedString = "simple string async hello world",

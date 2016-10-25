@@ -1,4 +1,4 @@
-class StringBuilder {
+class BuildString {
 
     constructor(props){
         this.parts = (props && props.constructor === Array) ? props : [''];

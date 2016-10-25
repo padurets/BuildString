@@ -1,14 +1,14 @@
 {
-  "name": "stringbuilder",
+  "name": "BuildString",
   "version": "0.3.0",
   "description": "build string by parameters",
-  "main": "stringbuilder.js",
+  "main": "buildstring.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/padurets/stringbuilder.git"
+    "url": "git+https://github.com/padurets/BuildString.git"
   },
   "keywords": [
     "string",
@@ -18,7 +18,7 @@
   "author": "Sergey Padurets",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/padurets/stringbuilder/issues"
+    "url": "https://github.com/padurets/BuildString/issues"
   },
-  "homepage": "https://github.com/padurets/stringbuilder#readme"
+  "homepage": "https://github.com/padurets/BuildString#readme"
 }
