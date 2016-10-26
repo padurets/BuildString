@@ -1,7 +1,17 @@
 class BuildString {
 
     constructor(props){
-        this.parts = (props && props.constructor === Array) ? props : [''];
+        this.data = [''];
+
+        if(props && props.constructor === Array){
+            this.data = props
+        }else if(props.data && props.data.constructor === Array){
+            this.data = props.data;
+
+            if(props.preHandler && props.preHandler.constructor === Function){
+                this.preHandler = props.preHandler;
+            }
+        }
 
         this.partHandler = {
             string: (str, part, callback) => {
@@ -85,9 +95,14 @@ class BuildString {
     build(callback) {
         this.valid = true;
         (function buildPart(active_part_index, str) {
-            if(active_part_index < this.parts.length){
+            if(active_part_index < this.data.length){
+                var preHandler = this.preHandler;
+                var part = this.data[ active_part_index ];
 
-                var part = this.parts[ active_part_index ];
+                if(preHandler && preHandler.constructor === Function){
+                    part = preHandler( part );
+                }
+
                 part = (part !== undefined && part !== null) ? part : '';
                 var handler = this.getHandler(this.partHandlerLink, part);
                 handler(str, part, buildPart.bind(this, active_part_index+1));
@@ -101,3 +116,5 @@ class BuildString {
         throw new Error(msg);
     };
 };
+
+module.exports = BuildString;
