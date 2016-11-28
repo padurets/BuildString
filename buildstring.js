@@ -1,3 +1,6 @@
+//TODO: возможность изменения возвращаемой модели
+//TODO: возможность добавления новых partHandler
+
 class BuildString {
 
     constructor(props){
@@ -93,23 +96,31 @@ class BuildString {
     };
 
     build(callback) {
-        this.valid = true;
-        (function buildPart(active_part_index, str) {
-            if(active_part_index < this.data.length){
-                var preHandler = this.preHandler;
-                var part = this.data[ active_part_index ];
+        var that = this;
+        return new Promise( function(resolve, reject) {
+            that.valid = true;
 
-                if(preHandler && preHandler.constructor === Function){
-                    part = preHandler( part );
+            (function buildPart(active_part_index, str) {
+                if(active_part_index < that.data.length){
+                    var preHandler = that.preHandler;
+                    var part = that.data[ active_part_index ];
+
+                    if(preHandler && preHandler.constructor === Function){
+                        part = preHandler( part );
+                    }
+
+                    part = (part !== undefined && part !== null) ? part : '';
+                    var handler = that.getHandler(that.partHandlerLink, part);
+                    handler(str, part, buildPart.bind(that, active_part_index+1));
+                }else{
+                    if(callback) callback(str, that.valid);
+                    resolve({
+                        string: str,
+                        valid: that.valid
+                    })
                 }
-
-                part = (part !== undefined && part !== null) ? part : '';
-                var handler = this.getHandler(this.partHandlerLink, part);
-                handler(str, part, buildPart.bind(this, active_part_index+1));
-            }else{
-                if(callback) callback(str, this.valid);
-            }
-        }).call(this, 0, '');
+            }).call(that, 0, '');
+        });
     }
 
     error(msg) {
