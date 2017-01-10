@@ -1,7 +1,7 @@
 //TODO: возможность изменения возвращаемой модели
 //TODO: возможность добавления новых partHandler
 
-class BuildString {
+module.exports = class BuildString {
 
     constructor(props){
         this.data = [''];
@@ -127,5 +127,3 @@ class BuildString {
         throw new Error(msg);
     };
 };
-
-module.exports = BuildString;

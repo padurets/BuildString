@@ -1,8 +1,8 @@
 {
   "name": "buildstring",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "build string by parameters",
-  "main": "buildstring.js",
+  "main": "./buildstring.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
