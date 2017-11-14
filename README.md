@@ -25,8 +25,8 @@ var parameters = [
 var string = new BuildString(parameters);
 
 string.build(function(generatedString, isvalid){
-    // generatedString = "simple string async hello world",
-    // isvalid = true
+    // generatedString === "simple string async hello world",
+    // isvalid === true
 });
 
 ```
